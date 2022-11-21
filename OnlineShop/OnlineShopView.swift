@@ -4,11 +4,11 @@
 //
 //  Created by Ibrahim_ios on 2022/11/16.
 //
-struct OnlineShopView_Previews: PreviewProvider {
-    static var previews: some View {
-        OnlineShopView()
-    }
-}
+//struct OnlineShopView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        OnlineShopView()
+//    }
+//}
 import SwiftUI
 enum TabItems: String, CaseIterable{
     case home = "house.fill"
