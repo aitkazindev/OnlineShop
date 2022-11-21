@@ -36,11 +36,18 @@ struct ProductCardView: View {
 
 extension ProductCardView{
     // product images
-    private var productImage: some View{
-        Image(product.image)
-            .resizable()
-            .clipShape(RoundedRectangle(cornerRadius: 5))
-            .frame(width: Settings.shared.productCardSize, height: Settings.shared.productCardSize)
+    @ViewBuilder private var productImage: some View{
+        if let image = product.image {
+            Image(uiImage: image)
+                .resizable()
+                .clipShape(RoundedRectangle(cornerRadius: 5))
+                .frame(width: Settings.shared.productCardSize, height: Settings.shared.productCardSize)
+        }else{
+            Image(product.imageFromAssets)
+                .resizable()
+                .clipShape(RoundedRectangle(cornerRadius: 5))
+                .frame(width: Settings.shared.productCardSize, height: Settings.shared.productCardSize)
+        }
     }
     
     // product article

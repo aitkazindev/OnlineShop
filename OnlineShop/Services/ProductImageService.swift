@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseStorage
+import UIKit
 
 class ProductImageService{
     static let shared: ProductImageService = ProductImageService()
@@ -49,6 +50,22 @@ class ProductImageService{
                     }
                 }
             }
+        }
+    }
+    
+    // download image from firebase storage
+    func downloadProductImage(product: ProductModel, completion: @escaping(Result<UIImage,Error>) -> Void){
+        images.child(product.id).child(product.id).getData(maxSize: 3*1024*1024) { data, error in
+            guard let data = data else{
+                if let error = error{
+                    completion(.failure(error))
+                }
+                return
+            }
+            guard let image = UIImage(data: data) else{
+                return
+            }
+            completion(.success(image))
         }
     }
 }

@@ -54,9 +54,15 @@ struct ProductDetailView: View {
 
 extension ProductDetailView{
     // product images
-    private var productImages: some View{
+    @ViewBuilder var productImages: some View{
         TabView{
-            Image(product.image)
+            if let image = product.image {
+                Image(uiImage: image)
+                
+            }else{
+                Image(product.imageFromAssets)
+                
+            }
         }.tabViewStyle(.page)
             .frame(height: 300)
     }
@@ -86,25 +92,25 @@ extension ProductDetailView{
         Text(product.name)
             .font(.headline)
             .foregroundColor(Color.palette.child)
-            
+        
     }
     // product description
     private var productDescription: some View{
         Text(product.description)
             .font(.subheadline)
-
+        
             .foregroundColor(Color.palette.child)
-            
+        
     }
     // product cost
     private var productCost: some View{
         Text("\(product.cost.toDecimalPlaces() )$")
             .font(.callout)
             .foregroundColor(Color.palette.child)
-            
+        
     }
     
-   
+    
     
     //close button
     private var closeButton: some View{
