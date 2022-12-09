@@ -138,7 +138,7 @@ extension ProductDetailView{
                 .foregroundColor(Color.palette.child)
         }
     }
-    
+    // MARK:  delete product 
     //delete product
     private var deleteProduct:some View {
         Button(action: {

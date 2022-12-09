@@ -113,6 +113,14 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		B65E8FD72942D2C10021ADA5 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				B67CA6812924C3F400CDD168 /* ProfileView.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
 		B665AEBF292718880068BD38 /* Shop */ = {
 			isa = PBXGroup;
 			children = (
@@ -127,6 +135,7 @@
 		B665AEC0292718A00068BD38 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				B65E8FD72942D2C10021ADA5 /* Profile */,
 				B665AEBF292718880068BD38 /* Shop */,
 			);
 			path = Modules;
@@ -155,7 +164,6 @@
 			children = (
 				B67CA67B2924C30000CDD168 /* HomeView.swift */,
 				B67CA67F2924C3C600CDD168 /* CartView.swift */,
-				B67CA6812924C3F400CDD168 /* ProfileView.swift */,
 			);
 			path = Pages;
 			sourceTree = "<group>";

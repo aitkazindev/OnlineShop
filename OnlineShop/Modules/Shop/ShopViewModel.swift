@@ -8,6 +8,8 @@
 import Foundation
 
 class ShopViewModel: ObservableObject{
+    
+    // MARK:  Vars
     private let productDataService = ProductDataService.shared
     private let productImageServices = ProductImageService.shared
     @Published var products: [ProductModel] = []
@@ -17,8 +19,7 @@ class ShopViewModel: ObservableObject{
         getProducts()
     }
     
-    // get products from firebase
-    
+    // MARK:  get products from firabase
     func getProducts(){
         productDataService.downloadProductsID { result in
             switch result{
@@ -33,8 +34,7 @@ class ShopViewModel: ObservableObject{
         }
     }
     
-    // get product
-    
+    // MARK:  get product from firebase by ID
     func getProduct(productID: String){
         productDataService.downloadProductData(productID: productID) { result in
             switch result {
