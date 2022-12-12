@@ -12,6 +12,8 @@ class ShopViewModel: ObservableObject{
     // MARK:  Vars
     private let productDataService = ProductDataService.shared
     private let productImageServices = ProductImageService.shared
+    
+    @Published var newProduct: NewProduct = NewProduct()
     @Published var products: [ProductModel] = []
     
     init(){
@@ -93,6 +95,16 @@ class ShopViewModel: ObservableObject{
             }
         }
     }
+    
+    // MARK:  Reset product
+    
+    func resetProduct(){
+        newProduct.brand = ""
+        newProduct.article = ""
+        newProduct.name = ""
+        newProduct.
+    }
+    
 
     private func getLocalProducts(){
         let product1 = ProductModel(article: "000001", brand: .brand1, name: "Product 1", description: "product 11", cost: 10, imageFromAssets: "1")
