@@ -10,50 +10,15 @@ import FirebaseStorage
 import UIKit
 
 class ProductImageService{
+    
+    // MARK:  Vars
     static let shared: ProductImageService = ProductImageService()
-    
     private let storage = Storage.storage().reference()
-    
     private var images: StorageReference{
         return storage.child("products")
     }
     
-    //upload product image
-    
-    func uploadProductImage(product: ProductModel, completion: @escaping(Result<ProductModel, Error>) -> Void){
-        let metadata = StorageMetadata()
-        metadata.contentType = "image/jpg"
-        images.child(product.id).child(product.id).putData(product.imageData,metadata: metadata) { metadata, error in
-            guard let _ = metadata else{
-                if let error = error{
-                    completion(.failure(error))
-                }
-                return
-            }
-            completion(.success(product))
-        }
-    }
-    
-    // delete product images
-    func deleteProductImages(product: ProductModel){
-        images.child(product.id).listAll { storageListResult, error in
-            guard let list = storageListResult else{
-                if let _ = error{
-                    //print()
-                }
-                return
-            }
-            list.items.forEach { link in
-                link.delete { error in
-                    if let error = error{
-                        print(error.localizedDescription)
-                    }
-                }
-            }
-        }
-    }
-    
-    // download image from firebase storage
+    // MARK:  download product image from firebase storage
     func downloadProductImage(product: ProductModel, completion: @escaping(Result<UIImage,Error>) -> Void){
         images.child(product.id).child(product.id).getData(maxSize: 3*1024*1024) { data, error in
             guard let data = data else{
@@ -66,6 +31,80 @@ class ProductImageService{
                 return
             }
             completion(.success(image))
+        }
+    }
+    
+    // MARK:  upload product main image to Firebase Storage
+    func uploadProductMainImage(product: ProductModel, completion: @escaping(Result<ProductModel, Error>) -> Void){
+        
+        guard let image = product.mainImage,
+              let imageData = image.jpegData(compressionQuality: 0.5)
+        else{ return }
+        
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpg"
+        
+        images.child("main").child(product.id).putData(imageData,metadata: metadata) { metadata, error in
+            guard let _ = metadata else{
+                if let error = error{
+                    completion(.failure(error))
+                }
+                return
+            }
+            completion(.success(product))
+        }
+    }
+    
+    // MARK:  upload product images to Firebase Storage
+    func uploadProductImages(product: ProductModel, completion: @escaping(Result<ProductModel, Error>) -> Void){
+        
+        guard !product.images.isEmpty else { return }
+        
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpg"
+        
+        product.images.forEach { image in
+            
+            guard let imageData = image.jpegData(compressionQuality: 0.5) else{return}
+            
+            images.child(product.id).child(UUID().uuidString).putData(imageData, metadata: metadata){
+                metadata,error in
+                guard let _ = metadata else{
+                    print("heloioijeourgbveuirbvneor")
+                    if let error = error{
+                        completion(.failure(error))
+                    }
+                    return
+                }
+                completion(.success(product))
+            }
+        }
+    }
+    
+    // MARK:  delete product images on Firebase Storage
+    func deleteProductImages(product: ProductModel){
+        images.child("main").child(product.id).delete {
+            error in
+            if let _ = error{
+                //
+            }
+            else{
+                self.images.child(product.id).listAll { storageListResult, error in
+                    guard let list = storageListResult else{
+                        if let _ = error{
+                            //print()
+                        }
+                        return
+                    }
+                    list.items.forEach { link in
+                        link.delete { error in
+                            if let error = error{
+                                print(error.localizedDescription)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

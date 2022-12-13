@@ -19,6 +19,13 @@ struct UploadNewProductView: View {
     var body: some View {
         ZStack{
             VStack(spacing: 10) {
+                HStack(spacing: 0) {
+                    // Upload product
+                    uploadProduct
+                    Spacer()
+                    // reset product
+                    resetProduct
+                }
                 // brand picker
                 productBrandPicker
                 // product article
@@ -45,12 +52,37 @@ struct UploadNewProductView: View {
 }
 
 extension UploadNewProductView{
+    //reset product
+    private var resetProduct: some View{
+        Button(action: {
+            shopVM.resetProduct()
+        }) {
+            Image(systemName: "arrow.triangle.2.circlepath")
+                .foregroundColor(Color.palette.child)
+                .bold()
+        }
+    }
+    
+    //upload product
+    private var uploadProduct: some View{
+        Button(action: {
+            if let product = shopVM.setProduct(){
+                shopVM.uploadProduct(product: product)
+            }
+        }) {
+            Image(systemName: "icloud.and.arrow.up")
+                .foregroundColor(Color.palette.child)
+                .bold()
+        }
+    }
+}
+extension UploadNewProductView{
     // product brand picker
     private var productBrandPicker: some View{
         HStack(spacing:0) {
             Text("BRAND")
                 .bold()
-                .foregroundColor(Color.palette.parent)
+                .foregroundColor(Color.palette.child)
                 .padding(.leading)
             Picker("", selection: $shopVM.newProduct.brand) {
                 ForEach(Brands.allCases, id: \.self) { brand in
@@ -66,42 +98,63 @@ extension UploadNewProductView{
     }
     // product article
     private var productArticle: some View{
-        TextField("article", text: $shopVM.newProduct.article)
-            .newProductTextFieldStyle()
+        HStack(spacing:0){
+            TextField("article", text: $shopVM.newProduct.article)
+                .newProductTextFieldStyle()
+            Spacer()
+            Image(systemName: "checkmark")
+                .foregroundColor(shopVM.newProduct.article.isEmpty ? .clear : Color.palette.child)
+        }
     }
     // product name
     private var productName: some View{
-        TextField("name", text: $shopVM.newProduct.name)
-            .newProductTextFieldStyle()
+        HStack(spacing:0){
+            TextField("name", text: $shopVM.newProduct.name)
+                .newProductTextFieldStyle()
+            Spacer()
+            Image(systemName: "checkmark")
+                .foregroundColor(shopVM.newProduct.name.isEmpty ? .clear : Color.palette.child)
+        }
     }
     // product cost
     private var productCost: some View{
-        TextField("cost", text: $shopVM.newProduct.cost)
-            .newProductTextFieldStyle()
+        HStack(spacing:0){
+            TextField("cost", text: $shopVM.newProduct.cost)
+                .newProductTextFieldStyle()
+            Spacer()
+            Image(systemName: "checkmark")
+                .foregroundColor(Double(shopVM.newProduct.cost) == nil ? .clear : Color.palette.child)
+        }
+        
     }
     
     // product description
     private var productDescription: some View{
-        ZStack(alignment: .topLeading) {
-            TextEditor(text: $shopVM.newProduct.description)
-                .font(.system(size: 16,weight: .medium,design: .rounded))
-                .foregroundColor(Color.palette.parent.opacity(0.88))
-                .cornerRadius(5)
-                .frame(height: 150)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 5)
-                        .stroke(
-                            Color.palette.child
-                            ,
-                            lineWidth: 1.0
-                        )
-                }
-            if shopVM.newProduct.description.isEmpty{
-                Text("description")
+        HStack(alignment: .bottom,spacing:0) {
+            ZStack(alignment: .topLeading) {
+                TextEditor(text: $shopVM.newProduct.description)
                     .font(.system(size: 16,weight: .medium,design: .rounded))
-                    .foregroundColor(.gray.opacity(0.66))
-                    .padding(EdgeInsets(top: 7, leading: 5, bottom: 5, trailing: 5))
+                    .foregroundColor(Color.palette.parent.opacity(0.88))
+                    .cornerRadius(5)
+                    .frame(height: 150)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 5)
+                            .stroke(
+                                Color.palette.child
+                                ,
+                                lineWidth: 1.0
+                            )
+                    }
+                if shopVM.newProduct.description.isEmpty{
+                    Text("description")
+                        .font(.system(size: 16,weight: .medium,design: .rounded))
+                        .foregroundColor(.gray.opacity(0.66))
+                        .padding(EdgeInsets(top: 7, leading: 5, bottom: 5, trailing: 5))
+                }
             }
+            Spacer()
+            Image(systemName: "checkmark")
+                .foregroundColor(shopVM.newProduct.description.isEmpty ? .clear : Color.palette.child)
         }
         
     }
@@ -110,11 +163,20 @@ extension UploadNewProductView{
     private var selectedImages: some View{
         HStack(spacing: 5) {
             ForEach(shopVM.newProduct.images, id: \.self){ image in
-                Image(uiImage: image)
-                    .resizable()
-                    .frame(width: 50,height: 50)
-                    .aspectRatio(contentMode: .fill)
-                    .cornerRadius(5)
+                ZStack{
+                    Image(uiImage: image)
+                        .resizable()
+                        .frame(width: 50,height: 50)
+                        .aspectRatio(contentMode: .fill)
+                        .cornerRadius(5)
+                    if shopVM.newProduct.mainImage == image{
+                        Image(systemName: "checkmark")
+                            .foregroundColor(Color.palette.child)
+                            .bold()
+                    }
+                }.onTapGesture {
+                    shopVM.newProduct.mainImage = image
+                }
             }
         }
     }
@@ -130,6 +192,7 @@ extension UploadNewProductView{
         .background(Circle().fill(Color.palette.child))
         .onChange(of: pickerSelectedItems) { newItems in
             Task{
+                shopVM.newProduct.mainImage = nil
                 shopVM.newProduct.images.removeAll()
                 for item in newItems{
                     if let imageData = try? await item.loadTransferable(type: Data.self),

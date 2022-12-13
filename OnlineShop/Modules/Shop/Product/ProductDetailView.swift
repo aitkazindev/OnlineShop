@@ -55,16 +55,17 @@ struct ProductDetailView: View {
 extension ProductDetailView{
     // product images
     @ViewBuilder var productImages: some View{
-        TabView{
-            if let image = product.image {
-                Image(uiImage: image)
-                
-            }else{
-                Image(product.imageFromAssets)
-                
+        if let _ = product.images.first{
+            TabView{
+                ForEach(product.images, id: \.self){
+                    image in
+                    Image(uiImage: image)
+                }
             }
-        }.tabViewStyle(.page)
+            .tabViewStyle(.page)
             .frame(height: 300)
+        }
+        
     }
     
     // product article
