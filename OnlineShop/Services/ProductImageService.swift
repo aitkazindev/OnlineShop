@@ -70,7 +70,7 @@ class ProductImageService{
             images.child(product.id).child(UUID().uuidString).putData(imageData, metadata: metadata){
                 metadata,error in
                 guard let _ = metadata else{
-                    print("heloioijeourgbveuirbvneor")
+                    
                     if let error = error{
                         completion(.failure(error))
                     }

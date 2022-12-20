@@ -30,22 +30,22 @@ class ShopViewModel: ObservableObject{
                     switch result {
                     case .success(let product):
                         self.productImageService.uploadProductImages(product: product) { result in
-                            print("result1")
+                            
                             switch result {
                             case .success(let product):
                                 print("Successfully uploaded image for product: \(product.id)")
                             case .failure(_):
-                                print("result3")
+                                
                                 self.deleteProduct(product: product)
                             }
                         }
                     case .failure(_):
-                        print("result4")
+                        
                         self.deleteProduct(product: product)
                     }
                 }
             case .failure(_):
-                print("result5")
+                
                 break
             }
         }
